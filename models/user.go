@@ -1,6 +1,9 @@
 package models
 
-import "github.com/Alejoboga20/go-api-fundamentals/db"
+import (
+	"github.com/Alejoboga20/go-api-fundamentals/db"
+	"github.com/Alejoboga20/go-api-fundamentals/utils"
+)
 
 type User struct {
 	ID       int64
@@ -15,9 +18,15 @@ func (u *User) Save() error {
 	if err != nil {
 		return err
 	}
-
 	defer stmt.Close()
-	result, err := stmt.Exec(u.Email, u.Password)
+
+	hashedPassword, err := utils.HashPassword(u.Password)
+
+	if err != nil {
+		return err
+	}
+
+	result, err := stmt.Exec(u.Email, hashedPassword)
 
 	if err != nil {
 		return err
