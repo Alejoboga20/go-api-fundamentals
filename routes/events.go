@@ -109,3 +109,36 @@ func updateEvent(context *gin.Context) {
 		"message": "Event updated successfully.",
 	})
 }
+
+func deleteEvent(context *gin.Context) {
+	eventId, err := strconv.ParseInt(context.Param("id"), 10, 64)
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid event id.",
+		})
+		return
+	}
+
+	eventToDelete, err := models.GetEventById(eventId)
+
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{
+			"error": "Could not get event.",
+		})
+		return
+	}
+
+	err = eventToDelete.Delete()
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Could not delete event.",
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Event deleted successfully.",
+	})
+}
