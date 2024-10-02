@@ -27,7 +27,7 @@ func VerifyJWT(token string) error {
 			return nil, errors.New("invalid token")
 		}
 
-		return secretKey, nil
+		return []byte(secretKey), nil
 	})
 
 	if err != nil {
