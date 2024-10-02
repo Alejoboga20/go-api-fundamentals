@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func singup(context *gin.Context) {
+func register(context *gin.Context) {
 	var user models.User
 	err := context.ShouldBindJSON(&user)
 
@@ -24,4 +24,23 @@ func singup(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusCreated, gin.H{"message": "User created successfully."})
+}
+
+func login(context *gin.Context) {
+	var user models.User
+	err := context.ShouldBindBodyWithJSON(&user)
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = user.ValidateCredentials()
+
+	if err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "User logged in successfully."})
 }
