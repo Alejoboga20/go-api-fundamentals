@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Alejoboga20/go-api-fundamentals/models"
+	"github.com/Alejoboga20/go-api-fundamentals/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,5 +43,12 @@ func login(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": "User logged in successfully."})
+	token, err := utils.GenerateJWT(user.Email, user.ID)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "User logged in successfully.", "token": token})
 }
